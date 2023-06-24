@@ -1,32 +1,41 @@
+<!--
+Note: We assume english alphabet and uppercase
+-->
 <?php
-define('ASCII_ALPHABET_LENGTH',26);
+include('Mode.php');
 
+define('ASCII_ALPHABET_LENGTH',26);
+define('A_ASCII',65);
+define('Z_ASCII',90);
 
 function calcAsciiCode(int $char_code): int {
-	if($char_code > 90) return $char_code - ASCII_ALPHABET_LENGTH;
-	else if($char_code < 65) return $char_code + ASCII_ALPHABET_LENGTH;
+	if($char_code > Z_ASCII) return $char_code - ASCII_ALPHABET_LENGTH;
+	else if($char_code < A_ASCII) return $char_code + ASCII_ALPHABET_LENGTH;
 	return $char_code;
 }
 
-function encodeCesar(string $word,int $swap): string {
+function filterCesar(string $word,int $swap, Mode $is_decode = Mode::DECODE): string {
 	$array_chars = str_split($word);
+	if($is_decode === Mode::DECODE) $swap = -$swap;
 	foreach($array_chars as $key => $char) {
-		var_dump(calcAsciiCode(ord($char)+$swap));
 		$array_chars[$key] = chr(calcAsciiCode(ord($char)+$swap));  
 	}
 	return implode($array_chars);
 }
 
-function decodeCesar(string $word, int $swap): string {
-	//TODO: Idem pero restando, refactor?
-}
-
 //TODO: Chequeos de entrada
 $word = readline("Introduce una palabra:") or die;
 $swap = readline("Introduce el grado de desplazamiento:") or die;
+$mode = intval(readline("¿Quieres codificar(1) o decodificar(2)?")) or die;
 
-//TODO: Upper and lower case
+if($mode == 1) {
+	$mode = Mode::ENCODE;
+}
+else {
+	$mode = Mode::DECODE;
+} 
+
 $word = strtoupper($word);
-echo encodeCesar($word, $swap);
+echo filterCesar($word, $swap,$mode);
 
 ?>
